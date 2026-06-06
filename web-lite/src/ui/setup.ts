@@ -26,20 +26,20 @@ export function renderToolbar(
         <div class="toolbar__modes">
           <label class="mode-tab">
             <input type="radio" name="mode" value="fixed" ${config.mode === 'fixed' ? 'checked' : ''} ${disabled} />
-            <span>Фикс.</span>
+            <span>Fixed</span>
           </label>
           <label class="mode-tab">
             <input type="radio" name="mode" value="progressive" ${config.mode === 'progressive' ? 'checked' : ''} ${disabled} />
-            <span>Прогр.</span>
+            <span>Prog.</span>
           </label>
         </div>
 
         <div class="toolbar__sound">
           <label class="sound-toggle">
             <input type="checkbox" name="soundEnabled" ${config.soundEnabled ? 'checked' : ''} />
-            <span>Звук</span>
+            <span>Sound</span>
           </label>
-          <select class="sound-style" name="soundStyle" aria-label="Стиль звука">
+          <select class="sound-style" name="soundStyle" aria-label="Sound style">
             ${renderSoundStyleOptions(config.soundStyle)}
           </select>
         </div>
@@ -61,17 +61,17 @@ function renderActionButtons(appState: ToolbarAppState, isPaused: boolean): stri
   if (appState === 'running') {
     return `
       <button type="button" class="btn btn--secondary btn--compact" id="btn-pause">
-        ${isPaused ? 'Далее' : 'Пауза'}
+        ${isPaused ? 'Resume' : 'Pause'}
       </button>
-      <button type="button" class="btn btn--danger btn--compact" id="btn-stop">Стоп</button>
+      <button type="button" class="btn btn--danger btn--compact" id="btn-stop">Stop</button>
     `;
   }
 
   if (appState === 'finished') {
-    return `<button type="button" class="btn btn--primary btn--compact" id="btn-restart">Снова</button>`;
+    return `<button type="button" class="btn btn--primary btn--compact" id="btn-restart">Again</button>`;
   }
 
-  return `<button type="submit" class="btn btn--primary btn--compact" id="btn-start">Старт</button>`;
+  return `<button type="submit" class="btn btn--primary btn--compact" id="btn-start">Start</button>`;
 }
 
 export function formatPracticeDuration(config: BreathingConfig): string {
@@ -84,12 +84,12 @@ export function formatPracticeDuration(config: BreathingConfig): string {
   const seconds = totalSec % 60;
 
   if (minutes === 0) {
-    return `${seconds} сек`;
+    return `${seconds} sec`;
   }
   if (seconds === 0) {
-    return `${minutes} мин`;
+    return `${minutes} min`;
   }
-  return `${minutes} мин ${seconds} сек`;
+  return `${minutes} min ${seconds} sec`;
 }
 
 export function updateDurationBadge(root: HTMLElement, config: BreathingConfig): void {
@@ -124,11 +124,11 @@ function isSoundStyle(value: FormDataEntryValue | null): value is SoundStyle {
 function renderFixedSettings(config: BreathingConfig, disabled: string): string {
   return `
     <label class="mini-field">
-      <span>Сек</span>
+      <span>Sec</span>
       <input type="number" name="duration" min="1" max="60" value="${config.duration}" inputmode="numeric" ${disabled} />
     </label>
     <label class="mini-field">
-      <span>Цикл</span>
+      <span>Cycle</span>
       <input type="number" name="cycles" min="1" max="50" value="${config.cycles}" inputmode="numeric" ${disabled} />
     </label>
   `;
@@ -137,19 +137,19 @@ function renderFixedSettings(config: BreathingConfig, disabled: string): string 
 function renderProgressiveSettings(config: BreathingConfig, disabled: string): string {
   return `
     <label class="mini-field">
-      <span>От</span>
+      <span>From</span>
       <input type="number" name="startValue" min="1" max="60" value="${config.duration}" inputmode="numeric" ${disabled} />
     </label>
     <label class="mini-field">
-      <span>До</span>
+      <span>To</span>
       <input type="number" name="endValue" min="1" max="60" value="${config.endValue}" inputmode="numeric" ${disabled} />
     </label>
     <label class="mini-field">
-      <span>Шаг</span>
+      <span>Step</span>
       <input type="number" name="step" min="1" max="10" value="${config.step}" inputmode="numeric" ${disabled} />
     </label>
     <label class="mini-field">
-      <span>Прох</span>
+      <span>Pass</span>
       <input type="number" name="passes" min="1" max="20" value="${config.cycles}" inputmode="numeric" ${disabled} />
     </label>
   `;
@@ -171,7 +171,7 @@ function readFixedFields(form: HTMLFormElement): BreathingConfig {
     mode: 'fixed',
     duration: clampNumber(data.get('duration'), 1, 60, 4),
     cycles: clampNumber(data.get('cycles'), 1, 50, 3),
-    endValue: 20,
+    endValue: 10,
     step: 1,
     ...readSoundSettings(form),
   };
@@ -182,9 +182,9 @@ function readProgressiveFields(form: HTMLFormElement): BreathingConfig {
   return {
     mode: 'progressive',
     duration: clampNumber(data.get('startValue'), 1, 60, 4),
-    endValue: clampNumber(data.get('endValue'), 1, 60, 20),
+    endValue: clampNumber(data.get('endValue'), 1, 60, 10),
     step: clampNumber(data.get('step'), 1, 10, 1),
-    cycles: clampNumber(data.get('passes'), 1, 20, 3),
+    cycles: clampNumber(data.get('passes'), 1, 20, 2),
     ...readSoundSettings(form),
   };
 }

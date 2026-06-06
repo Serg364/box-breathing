@@ -103,7 +103,7 @@ function renderProgressiveSpiral(options: BreathingVisualOptions): string {
   const activeLevel = state?.currentLevel ?? config.duration;
 
   if (levels.length === 0) {
-    return '<p class="status-line">Неверные параметры прогрессии</p>';
+    return '<p class="status-line">Invalid progression settings</p>';
   }
 
   const count = levels.length;
@@ -171,12 +171,12 @@ function buildSpiralCenter(
   if (!isIdle && activePhase) {
     return `
       <span class="spiral-center__level">${level}</span>
-      <span class="spiral-center__unit">сек</span>
+      <span class="spiral-center__unit">sec</span>
     `;
   }
   return `
     <span class="spiral-center__level spiral-center__level--preview">${level}</span>
-    <span class="spiral-center__unit">сек</span>
+    <span class="spiral-center__unit">sec</span>
   `;
 }
 
@@ -241,9 +241,9 @@ function buildAnimatedSquare(options: AnimatedSquareOptions): string {
 
   let centerContent = '';
   if (!isIdle && activePhase) {
-    centerContent = `<span class="square-center__level">${level}</span><span class="square-center__unit">сек</span>`;
+    centerContent = `<span class="square-center__level">${level}</span><span class="square-center__unit">sec</span>`;
   } else {
-    centerContent = `<span class="square-center__level${isIdle ? ' square-center__level--preview' : ''}">${level}</span><span class="square-center__unit">сек</span>`;
+    centerContent = `<span class="square-center__level${isIdle ? ' square-center__level--preview' : ''}">${level}</span><span class="square-center__unit">sec</span>`;
   }
 
   return `
@@ -258,13 +258,13 @@ function buildAnimatedSquare(options: AnimatedSquareOptions): string {
 function labelForSide(side: string): string {
   switch (side) {
     case 'top':
-      return 'Вдох';
+      return 'Inhale';
     case 'right':
-      return 'Задерж';
+      return 'Hold';
     case 'bottom':
-      return 'Выдох';
+      return 'Exhale';
     case 'left':
-      return 'Задерж';
+      return 'Hold';
     default:
       return '';
   }
