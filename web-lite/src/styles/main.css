@@ -554,10 +554,10 @@ body {
   min-width: 52px;
   min-height: 52px;
   padding: 6px;
-  background: var(--surface);
-  border: 1px solid var(--surface-2);
+  background: color-mix(in srgb, var(--surface) 40%, transparent);
+  border: 1px solid color-mix(in srgb, var(--surface-2) 40%, transparent);
   border-radius: 50%;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.35);
+  box-shadow: none;
 }
 
 .spiral-center__countdown {
@@ -754,9 +754,10 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: var(--surface);
+  background: color-mix(in srgb, var(--surface) 40%, transparent);
   border-radius: 10px;
-  border: 1px solid var(--surface-2);
+  border: 1px solid color-mix(in srgb, var(--surface-2) 40%, transparent);
+  box-shadow: none;
 }
 
 .square-center__countdown {
@@ -783,6 +784,10 @@ body {
 }
 
 @media (max-width: 640px) {
+  :root {
+    --touch-min: 35px;
+  }
+
   .app-layout {
     max-width: 100%;
     gap: 8px;
@@ -807,8 +812,17 @@ body {
   }
 
   .toolbar {
-    padding: 14px;
-    gap: 12px;
+    padding: 11px;
+    gap: 10px;
+  }
+
+  .btn {
+    font-size: 0.8rem;
+    padding: 10px 14px;
+  }
+
+  .btn--compact {
+    padding: 10px 12px;
   }
 
   .toolbar__row--options {
@@ -831,7 +845,8 @@ body {
 
   .mode-tab span {
     width: 100%;
-    font-size: 1rem;
+    font-size: 0.8rem;
+    padding: 6px 13px;
   }
 
   .toolbar__sound {
@@ -843,7 +858,8 @@ body {
   .sound-toggle span,
   .sound-style {
     width: 100%;
-    font-size: 1rem;
+    font-size: 0.8rem;
+    padding: 6px 10px;
   }
 
   .toolbar__settings {
@@ -855,18 +871,19 @@ body {
 
   .mini-field {
     justify-content: space-between;
-    font-size: 0.95rem;
-    padding: 4px 0;
+    font-size: 0.76rem;
+    padding: 3px 0;
   }
 
   .mini-field input {
-    width: 64px;
-    font-size: 18px;
+    width: 51px;
+    font-size: 14px;
+    padding: 6px 8px;
   }
 
   .toolbar__duration {
-    font-size: 0.9rem;
-    padding: 10px 14px;
+    font-size: 0.72rem;
+    padding: 8px 11px;
   }
 
   .toolbar__params {
