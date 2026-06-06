@@ -8,6 +8,8 @@ interface ActiveNodes {
   filters: BiquadFilterNode[];
 }
 
+type BrowserAudioContext = typeof AudioContext;
+
 export class BreathingAudio {
   private ctx: AudioContext | null = null;
   private masterGain: GainNode | null = null;
@@ -18,6 +20,7 @@ export class BreathingAudio {
   private lastCountdown = -1;
   private enabled = true;
   private style: SoundStyle = 'soft';
+  private unlockPromise: Promise<void> | null = null;
 
   setEnabled(value: boolean): void {
     this.enabled = value;
@@ -31,9 +34,21 @@ export class BreathingAudio {
     this.style = style;
   }
 
-  initOnUserGesture(): void {
+  unlock(): Promise<void> {
+    if (!this.unlockPromise) {
+      this.unlockPromise = this.unlockAudio();
+    }
+    return this.unlockPromise;
+  }
+
+  private async unlockAudio(): Promise<void> {
     if (!this.ctx) {
-      this.ctx = new AudioContext();
+      const AudioCtx = getAudioContextClass();
+      if (!AudioCtx) {
+        return;
+      }
+
+      this.ctx = new AudioCtx();
       this.masterGain = this.ctx.createGain();
       this.masterGain.gain.value = MASTER_VOLUME;
       this.masterGain.connect(this.ctx.destination);
@@ -41,8 +56,69 @@ export class BreathingAudio {
       this.brownNoise = createBrownNoiseBuffer(this.ctx);
     }
 
+    await this.resumeContext();
+    this.playSilentUnlock();
+    await this.waitForRunning();
+  }
+
+  private async resumeContext(): Promise<void> {
+    if (!this.ctx || this.ctx.state !== 'suspended') {
+      return;
+    }
+
+    try {
+      await this.ctx.resume();
+    } catch {
+      // ignore — will retry on next user gesture
+    }
+  }
+
+  private async waitForRunning(): Promise<void> {
+    const ctx = this.ctx;
+    if (!ctx || ctx.state === 'running') {
+      return;
+    }
+
+    await new Promise<void>((resolve) => {
+      const onStateChange = (): void => {
+        if (ctx.state === 'running') {
+          ctx.removeEventListener('statechange', onStateChange);
+          resolve();
+        }
+      };
+      ctx.addEventListener('statechange', onStateChange);
+      onStateChange();
+    });
+  }
+
+  private playSilentUnlock(): void {
+    const ctx = this.ctx;
+    const master = this.masterGain;
+    if (!ctx || !master) {
+      return;
+    }
+
+    const buffer = ctx.createBuffer(1, 1, ctx.sampleRate);
+    const source = ctx.createBufferSource();
+    source.buffer = buffer;
+
+    const gain = ctx.createGain();
+    gain.gain.value = 0.001;
+    source.connect(gain);
+    gain.connect(master);
+
+    const now = ctx.currentTime;
+    source.start(now);
+    source.stop(now + 0.01);
+  }
+
+  private ensureReady(): void {
+    if (!this.enabled || !this.ctx) {
+      return;
+    }
+
     if (this.ctx.state === 'suspended') {
-      void this.ctx.resume();
+      void this.resumeContext();
     }
   }
 
@@ -53,7 +129,7 @@ export class BreathingAudio {
     }
 
     if (status === 'running') {
-      void this.ctx?.resume();
+      void this.resumeContext();
       return;
     }
 
@@ -61,6 +137,7 @@ export class BreathingAudio {
       this.stopAll();
       this.lastScheduleIndex = -1;
       this.lastCountdown = -1;
+      this.unlockPromise = null;
     }
   }
 
@@ -69,6 +146,7 @@ export class BreathingAudio {
       return;
     }
 
+    this.ensureReady();
     this.lastCountdown = secondsLeft;
     this.playSoftTick();
   }
@@ -77,6 +155,8 @@ export class BreathingAudio {
     if (!this.enabled || !this.ctx) {
       return;
     }
+
+    this.ensureReady();
 
     if (state.scheduleIndex !== this.lastScheduleIndex) {
       this.lastScheduleIndex = state.scheduleIndex;
@@ -339,6 +419,11 @@ export class BreathingAudio {
       this.active.filters.push(filter);
     }
   }
+}
+
+function getAudioContextClass(): BrowserAudioContext | null {
+  const extendedWindow = window as Window & { webkitAudioContext?: BrowserAudioContext };
+  return window.AudioContext ?? extendedWindow.webkitAudioContext ?? null;
 }
 
 function createPinkNoiseBuffer(ctx: AudioContext): AudioBuffer {

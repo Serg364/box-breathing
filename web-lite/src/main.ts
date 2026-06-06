@@ -109,6 +109,9 @@ function bindForm(): void {
         };
         breathingAudio.setEnabled(updated.soundEnabled);
         breathingAudio.setStyle(updated.soundStyle);
+        if (updated.soundEnabled) {
+          void breathingAudio.unlock();
+        }
         saveSettings(currentConfig);
       }
 
@@ -136,7 +139,7 @@ function bindForm(): void {
     }
     currentConfig = readSetupForm(form);
     saveSettings(currentConfig);
-    startPractice(currentConfig);
+    void startPractice(currentConfig);
   });
 
   toolbarRoot.querySelector<HTMLButtonElement>('#btn-pause')?.addEventListener('click', () => {
@@ -197,14 +200,14 @@ function resetToIdle(): void {
   updateStage();
 }
 
-function startPractice(config: BreathingConfig): void {
+async function startPractice(config: BreathingConfig): Promise<void> {
   appState = 'running';
   phaseState = null;
   countdown = null;
   breathingAudio.setEnabled(config.soundEnabled);
   breathingAudio.setStyle(config.soundStyle);
   if (config.soundEnabled) {
-    breathingAudio.initOnUserGesture();
+    await breathingAudio.unlock();
   }
   renderToolbarSection();
   updateStage();
