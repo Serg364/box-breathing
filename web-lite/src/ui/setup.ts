@@ -18,34 +18,40 @@ export function renderToolbar(
 
   return `
     <form class="toolbar" id="setup-form">
-      ${renderActionButtons(appState, isPaused)}
-
-      <div class="toolbar__modes">
-        <label class="mode-tab">
-          <input type="radio" name="mode" value="fixed" ${config.mode === 'fixed' ? 'checked' : ''} ${disabled} />
-          <span>Фикс.</span>
-        </label>
-        <label class="mode-tab">
-          <input type="radio" name="mode" value="progressive" ${config.mode === 'progressive' ? 'checked' : ''} ${disabled} />
-          <span>Прогр.</span>
-        </label>
+      <div class="toolbar__row toolbar__row--actions">
+        ${renderActionButtons(appState, isPaused)}
       </div>
 
-      <div class="toolbar__sound">
-        <label class="sound-toggle">
-          <input type="checkbox" name="soundEnabled" ${config.soundEnabled ? 'checked' : ''} />
-          <span>Звук</span>
-        </label>
-        <select class="sound-style" name="soundStyle" aria-label="Стиль звука">
-          ${renderSoundStyleOptions(config.soundStyle)}
-        </select>
-      </div>
-
-      <div class="toolbar__params">
-        <div class="toolbar__settings" id="settings-fields">
-          ${settingsHtml}
+      <div class="toolbar__row toolbar__row--options">
+        <div class="toolbar__modes">
+          <label class="mode-tab">
+            <input type="radio" name="mode" value="fixed" ${config.mode === 'fixed' ? 'checked' : ''} ${disabled} />
+            <span>Фикс.</span>
+          </label>
+          <label class="mode-tab">
+            <input type="radio" name="mode" value="progressive" ${config.mode === 'progressive' ? 'checked' : ''} ${disabled} />
+            <span>Прогр.</span>
+          </label>
         </div>
-        <span class="toolbar__duration" id="duration-total">${formatPracticeDuration(config)}</span>
+
+        <div class="toolbar__sound">
+          <label class="sound-toggle">
+            <input type="checkbox" name="soundEnabled" ${config.soundEnabled ? 'checked' : ''} />
+            <span>Звук</span>
+          </label>
+          <select class="sound-style" name="soundStyle" aria-label="Стиль звука">
+            ${renderSoundStyleOptions(config.soundStyle)}
+          </select>
+        </div>
+      </div>
+
+      <div class="toolbar__row toolbar__row--params">
+        <div class="toolbar__params">
+          <div class="toolbar__settings" id="settings-fields">
+            ${settingsHtml}
+          </div>
+          <span class="toolbar__duration" id="duration-total">${formatPracticeDuration(config)}</span>
+        </div>
       </div>
     </form>
   `;
@@ -119,11 +125,11 @@ function renderFixedSettings(config: BreathingConfig, disabled: string): string 
   return `
     <label class="mini-field">
       <span>Сек</span>
-      <input type="number" name="duration" min="1" max="60" value="${config.duration}" ${disabled} />
+      <input type="number" name="duration" min="1" max="60" value="${config.duration}" inputmode="numeric" ${disabled} />
     </label>
     <label class="mini-field">
       <span>Цикл</span>
-      <input type="number" name="cycles" min="1" max="50" value="${config.cycles}" ${disabled} />
+      <input type="number" name="cycles" min="1" max="50" value="${config.cycles}" inputmode="numeric" ${disabled} />
     </label>
   `;
 }
@@ -132,19 +138,19 @@ function renderProgressiveSettings(config: BreathingConfig, disabled: string): s
   return `
     <label class="mini-field">
       <span>От</span>
-      <input type="number" name="startValue" min="1" max="60" value="${config.duration}" ${disabled} />
+      <input type="number" name="startValue" min="1" max="60" value="${config.duration}" inputmode="numeric" ${disabled} />
     </label>
     <label class="mini-field">
       <span>До</span>
-      <input type="number" name="endValue" min="1" max="60" value="${config.endValue}" ${disabled} />
+      <input type="number" name="endValue" min="1" max="60" value="${config.endValue}" inputmode="numeric" ${disabled} />
     </label>
     <label class="mini-field">
       <span>Шаг</span>
-      <input type="number" name="step" min="1" max="10" value="${config.step}" ${disabled} />
+      <input type="number" name="step" min="1" max="10" value="${config.step}" inputmode="numeric" ${disabled} />
     </label>
     <label class="mini-field">
       <span>Прох</span>
-      <input type="number" name="passes" min="1" max="20" value="${config.cycles}" ${disabled} />
+      <input type="number" name="passes" min="1" max="20" value="${config.cycles}" inputmode="numeric" ${disabled} />
     </label>
   `;
 }

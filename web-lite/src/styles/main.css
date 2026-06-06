@@ -11,6 +11,7 @@
   --side-active: #4ecdc4;
   --radius: 12px;
   --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --touch-min: 44px;
 }
 
 *,
@@ -41,7 +42,11 @@ body {
   width: 100%;
   display: flex;
   justify-content: center;
-  padding: 6px 8px;
+  padding:
+    max(8px, env(safe-area-inset-top))
+    max(10px, env(safe-area-inset-right))
+    max(8px, env(safe-area-inset-bottom))
+    max(10px, env(safe-area-inset-left));
 }
 
 .app-layout {
@@ -143,12 +148,36 @@ body {
 
 .toolbar {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 10px;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
   background: var(--surface);
   border-radius: var(--radius);
+}
+
+.toolbar__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.toolbar__row--actions {
+  gap: 10px;
+}
+
+.toolbar__row--actions .btn {
+  flex: 1;
+  min-height: var(--touch-min);
+}
+
+.toolbar__row--options {
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.toolbar__row--params {
+  width: 100%;
 }
 
 .toolbar__modes {
@@ -160,16 +189,17 @@ body {
 .toolbar__params {
   display: flex;
   align-items: center;
-  gap: 8px;
-  flex: 1 1 auto;
+  gap: 10px;
+  width: 100%;
   min-width: 0;
 }
 
 .toolbar__settings {
   display: flex;
   align-items: center;
-  gap: 6px;
-  flex: 0 1 auto;
+  flex-wrap: wrap;
+  gap: 8px;
+  flex: 1 1 auto;
   min-width: 0;
 }
 
@@ -180,13 +210,16 @@ body {
 .toolbar__duration {
   flex-shrink: 0;
   margin-left: auto;
-  font-size: 0.7rem;
+  font-size: 0.8rem;
   font-weight: 600;
   color: var(--text-muted);
   white-space: nowrap;
-  padding: 4px 8px;
+  padding: 8px 12px;
+  min-height: var(--touch-min);
+  display: inline-flex;
+  align-items: center;
   background: var(--surface-2);
-  border-radius: 6px;
+  border-radius: 8px;
   font-variant-numeric: tabular-nums;
 }
 
@@ -201,12 +234,15 @@ body {
 }
 
 .mode-tab span {
-  display: block;
-  padding: 5px 10px;
-  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--touch-min);
+  padding: 8px 16px;
+  border-radius: 10px;
   background: var(--surface-2);
   color: var(--text-muted);
-  font-size: 0.75rem;
+  font-size: 0.9rem;
   font-weight: 600;
   transition: background 0.15s, color 0.15s;
 }
@@ -240,12 +276,15 @@ body {
 }
 
 .sound-toggle span {
-  display: block;
-  padding: 5px 10px;
-  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--touch-min);
+  padding: 8px 14px;
+  border-radius: 10px;
   background: var(--surface-2);
   color: var(--text-muted);
-  font-size: 0.75rem;
+  font-size: 0.9rem;
   font-weight: 600;
   transition: background 0.15s, color 0.15s;
 }
@@ -256,15 +295,17 @@ body {
 }
 
 .sound-style {
-  padding: 5px 6px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
+  min-height: var(--touch-min);
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--surface-2);
   background: var(--surface-2);
   color: var(--text-muted);
-  font-size: 0.7rem;
+  font-size: 0.9rem;
   font-weight: 600;
+  font-family: inherit;
   cursor: pointer;
-  max-width: 72px;
+  min-width: 88px;
 }
 
 .sound-style:focus {
@@ -275,8 +316,8 @@ body {
 .mini-field {
   display: flex;
   align-items: center;
-  gap: 4px;
-  font-size: 0.7rem;
+  gap: 8px;
+  font-size: 0.85rem;
   color: var(--text-muted);
   flex-shrink: 0;
 }
@@ -286,15 +327,18 @@ body {
 }
 
 .mini-field input {
-  width: 40px;
-  padding: 4px 6px;
+  width: 52px;
+  min-height: var(--touch-min);
+  padding: 8px 10px;
   border: 1px solid var(--surface-2);
-  border-radius: 6px;
+  border-radius: 10px;
   background: var(--bg);
   color: var(--text);
-  font-size: 0.8rem;
+  font-size: 16px;
   font-family: inherit;
   text-align: center;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .mini-field input:focus {
@@ -308,14 +352,15 @@ body {
 
 .btn {
   border: none;
-  border-radius: 8px;
-  padding: 6px 14px;
-  font-size: 0.8rem;
+  border-radius: 10px;
+  padding: 12px 18px;
+  font-size: 1rem;
   font-weight: 600;
   font-family: inherit;
   cursor: pointer;
   transition: transform 0.15s;
   flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .btn:active {
@@ -339,7 +384,7 @@ body {
 }
 
 .btn--compact {
-  padding: 6px 12px;
+  padding: 12px 16px;
 }
 
 .stage {
@@ -751,18 +796,153 @@ body {
   margin-top: 2px;
 }
 
-@media (max-width: 420px) {
-  .toolbar__params {
-    flex: 1 1 100%;
+@media (max-width: 640px) {
+  .app-layout {
+    max-width: 100%;
+    gap: 8px;
   }
-}
 
-@media (max-width: 380px) {
+  .top-status {
+    padding: 10px 12px;
+    font-size: 0.85rem;
+  }
+
+  .top-status__phase-timer {
+    font-size: 2rem;
+  }
+
+  .top-status__phase-name {
+    font-size: 1rem;
+  }
+
+  .top-status__item {
+    padding: 6px 10px;
+    font-size: 0.85rem;
+  }
+
+  .toolbar {
+    padding: 14px;
+    gap: 12px;
+  }
+
+  .toolbar__row--options {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .toolbar__modes,
+  .toolbar__sound {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .toolbar__modes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .mode-tab span {
+    width: 100%;
+    font-size: 1rem;
+  }
+
+  .toolbar__sound {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .sound-toggle span,
+  .sound-style {
+    width: 100%;
+    font-size: 1rem;
+  }
+
   .toolbar__settings {
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .mini-field {
+    justify-content: space-between;
+    font-size: 0.95rem;
+    padding: 4px 0;
   }
 
   .mini-field input {
-    width: 36px;
+    width: 64px;
+    font-size: 18px;
+  }
+
+  .toolbar__duration {
+    font-size: 0.9rem;
+    padding: 10px 14px;
+  }
+
+  .toolbar__params {
+    flex-wrap: wrap;
+  }
+}
+
+@media (min-width: 641px) {
+  .toolbar {
+    flex-flow: row wrap;
+    align-items: center;
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .toolbar__row--actions {
+    flex: 0 0 auto;
+  }
+
+  .toolbar__row--options {
+    flex: 0 0 auto;
+    flex-wrap: nowrap;
+  }
+
+  .toolbar__row--params {
+    flex: 1 1 200px;
+    min-width: 0;
+  }
+
+  .toolbar__row--actions .btn {
+    flex: 0 0 auto;
+    min-height: 40px;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+  }
+
+  .mode-tab span,
+  .sound-toggle span,
+  .sound-style {
+    min-height: 40px;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+  }
+
+  .sound-style {
+    min-width: 80px;
+  }
+
+  .mini-field {
+    font-size: 0.8rem;
+  }
+
+  .mini-field input {
+    width: 46px;
+    min-height: 40px;
+    font-size: 15px;
+    padding: 6px 8px;
+  }
+
+  .toolbar__duration {
+    min-height: 40px;
+    padding: 6px 10px;
+    font-size: 0.75rem;
   }
 }
